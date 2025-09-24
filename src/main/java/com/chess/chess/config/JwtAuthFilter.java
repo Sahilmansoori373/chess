@@ -16,7 +16,6 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthFilter extends org.springframework.web.filter.OncePerRequestFilter {
     private final JwtUtil jwtUtil;
-    private final com.chess.chess.repository.UserRepository userRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,

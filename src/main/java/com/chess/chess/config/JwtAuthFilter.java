@@ -1,5 +1,6 @@
 package com.chess.chess.config;
 
+import com.chess.chess.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,10 +17,17 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthFilter extends org.springframework.web.filter.OncePerRequestFilter {
     private final JwtUtil jwtUtil;
-
+    private final UserRepository userRepository;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
+
+        String path = request.getServletPath();
+        if (path.startsWith("/api/auth/")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String header = request.getHeader("Authorization");
         String token = null;
         String username = null;

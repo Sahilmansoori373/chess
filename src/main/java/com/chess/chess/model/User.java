@@ -23,6 +23,9 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @Column
+    private String fullName;
+
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> roles;
 }

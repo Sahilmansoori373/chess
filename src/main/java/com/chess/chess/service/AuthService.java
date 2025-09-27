@@ -20,6 +20,7 @@ public class AuthService {
     public void register(RegisterRequest request) {
         User user = User.builder()
                 .username(request.getUsername())
+                .fullName(request.getFullName())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .roles(Set.of("ROLE_USER"))
                 .build();

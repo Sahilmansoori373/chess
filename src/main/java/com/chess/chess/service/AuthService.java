@@ -17,14 +17,20 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
-    public void register(RegisterRequest request) {
+    public AuthResponse register(RegisterRequest request) {
         User user = User.builder()
                 .username(request.getUsername())
                 .fullName(request.getFullName())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .roles(Set.of("ROLE_USER"))
                 .build();
+
         userRepository.save(user);
+
+        // Generate token
+        String token = jwtUtil.generateToken(user.getUsername());
+
+        return new AuthResponse(token, user.getUsername(), user.getFullName());
     }
 
     public AuthResponse login(String username, String password) {
@@ -36,7 +42,8 @@ public class AuthService {
         }
 
         String token = jwtUtil.generateToken(user.getUsername());
-        return new AuthResponse(token);
+        return new AuthResponse(token, user.getUsername(), user.getFullName());
     }
+
 }
 

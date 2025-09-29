@@ -37,6 +37,8 @@ public class JwtAuthFilter extends org.springframework.web.filter.OncePerRequest
             username = jwtUtil.extractUsername(token);
         }
 
+
+
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             var user = userRepository.findByUsername(username).orElse(null);
             if (user != null) {

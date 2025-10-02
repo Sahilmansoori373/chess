@@ -24,6 +24,7 @@ public class AuthService {
             throw new RuntimeException("Username already exists");
         }
 
+
         User user = User.builder()
                 .username(request.getUsername())
                 .fullName(request.getFullName())

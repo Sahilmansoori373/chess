@@ -46,6 +46,12 @@
             <artifactId>h2</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <!-- MySQL Connector -->
+        <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>mssql-jdbc</artifactId>
+            <version>12.6.1.jre11</version> <!-- works for Java 11+ including Java 21 -->
+        </dependency>
 
         <!-- JWT -->
         <dependency>

@@ -49,7 +49,10 @@ public class AuthService {
         System.out.println("➡️ Stored password hash: " + user.getPassword());
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            System.out.println("❌ Password mismatch!");
+            System.out.println("➡️ Raw password: " + password);
+            System.out.println("➡️ DB hash: " + user.getPassword());
+            System.out.println("➡️ Freshly encoded raw: " + passwordEncoder.encode(password));
+            System.out.println("➡️ Matches? " + passwordEncoder.matches(password, user.getPassword()));
             throw new RuntimeException("Invalid password");
         }
 

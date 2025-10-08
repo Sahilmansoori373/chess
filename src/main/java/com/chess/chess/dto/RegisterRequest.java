@@ -1,13 +1,8 @@
 package com.chess.chess.dto;
-
 import lombok.*;
-
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Data @NoArgsConstructor @AllArgsConstructor
 public class RegisterRequest {
+    private String fullname;
     private String username;
     private String password;
-    private String fullName;
 }

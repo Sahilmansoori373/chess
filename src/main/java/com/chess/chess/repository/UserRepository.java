@@ -1,5 +1,5 @@
 package com.chess.chess.repository;
-import com.chess.chess.modal.User;
+import com.chess.chess.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.Optional;

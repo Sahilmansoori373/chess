@@ -1,7 +1,8 @@
 package com.chess.chess.dto;
-import lombok.*;
-@Data @NoArgsConstructor @AllArgsConstructor
-public class AuthenticationRequest {
-    private String username;
-    private String password;
-}
+
+import jakarta.validation.constraints.NotBlank;
+
+public record AuthenticationRequest(
+        @NotBlank(message = "Username is required") String username,
+        @NotBlank(message = "Password is required") String password
+) {}

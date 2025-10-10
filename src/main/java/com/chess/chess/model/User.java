@@ -20,6 +20,9 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @Version
+    private Long version;
+
     private int score = 1000; // ELO-like score
 
     // Matches played as white

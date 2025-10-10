@@ -14,13 +14,13 @@ public class UserService {
     private final UserRepository userRepo;
     private final PasswordEncoder passwordEncoder;
     public User registerNewUser(RegisterRequest request) {
-        if (userRepo.existsByUsername(request.getUsername())) {
+        if (userRepo.existsByUsername(request.username())) {
             throw new IllegalArgumentException("Username already taken");
         }
         User user = User.builder()
-                .fullname(request.getFullname())
-                .username(request.getUsername())
-                .password(passwordEncoder.encode(request.getPassword()))
+                .fullname(request.fullname())
+                .username(request.username())
+                .password(passwordEncoder.encode(request.password()))
                 .build();
         return userRepo.save(user);
     }

@@ -1,8 +1,9 @@
 package com.chess.chess.dto;
-import lombok.*;
-@Data @NoArgsConstructor @AllArgsConstructor
-public class RegisterRequest {
-    private String fullname;
-    private String username;
-    private String password;
-}
+
+import jakarta.validation.constraints.*;
+
+public record RegisterRequest(
+        @NotBlank String fullname,
+        @NotBlank @Size(min = 3, max = 50) String username,
+        @NotBlank @Size(min = 6, max = 100) String password
+) {}

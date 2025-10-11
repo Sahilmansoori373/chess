@@ -1,6 +1,7 @@
 package com.chess.chess.game;
 
 import com.chess.chess.exception.InvalidMoveException;
+import com.chess.chess.game.model.MoveResult;
 import com.chess.chess.model.Color;
 
 public interface GameEngineService {

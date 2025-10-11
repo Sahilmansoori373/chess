@@ -1,9 +1,13 @@
 package com.chess.chess.game;
 
 import com.chess.chess.exception.InvalidMoveException;
+import com.chess.chess.game.model.Board;
+import com.chess.chess.game.model.MoveResult;
+import com.chess.chess.game.model.Position;
 import com.chess.chess.model.Color;
 import com.chess.chess.game.util.FenConverter;
 import com.chess.chess.game.rules.MoveValidator; // your package
+import com.chess.chess.model.Piece;
 import org.springframework.stereotype.Service;
 
 @Service

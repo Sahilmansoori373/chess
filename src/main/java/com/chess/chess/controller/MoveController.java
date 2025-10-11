@@ -3,6 +3,7 @@ package com.chess.chess.controller;
 import com.chess.chess.dto.*;
 import com.chess.chess.exception.*;
 import com.chess.chess.game.*;
+import com.chess.chess.game.model.MoveResult;
 import com.chess.chess.model.*;
 import com.chess.chess.service.*;
 import org.springframework.http.*;
@@ -119,7 +120,7 @@ public class MoveController {
                 // Persist system message
                 messageService.sendMessage(Message.builder()
                         .match(match).sender(null) // null for system
-                        .content("Game ended. Winner: " + winner.getName())
+                        .content("Game ended. Winner: " + winner.getUsername())
                         .build());
             } else {
                 match.setStatus(GameStatus.COMPLETED);

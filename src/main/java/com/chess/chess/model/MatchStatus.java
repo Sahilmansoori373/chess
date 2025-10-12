@@ -1,9 +1,9 @@
 package com.chess.chess.model;
 
-public enum GameStatus {
+public enum MatchStatus {
     WAITING,
     IN_PROGRESS,
     COMPLETED,
-    ABORTED,
-    DRAW
+    DRAW,
+    ABORTED
 }

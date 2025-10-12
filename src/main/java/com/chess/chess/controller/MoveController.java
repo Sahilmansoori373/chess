@@ -2,8 +2,8 @@ package com.chess.chess.controller;
 
 import com.chess.chess.dto.*;
 import com.chess.chess.exception.*;
-import com.chess.chess.game.*;
 import com.chess.chess.game.model.MoveResult;
+import com.chess.chess.game.service.GameEngineService;
 import com.chess.chess.model.*;
 import com.chess.chess.service.*;
 import org.springframework.http.*;
@@ -59,7 +59,7 @@ public class MoveController {
         if (expected != playerColor) throw new ConflictException("Not player's turn");
 
         // Load board state
-        BoardState boardState = boardStateService.findByMatch(match)
+        BoardEntity boardState = boardStateService.findByMatch(match)
                 .orElseThrow(() -> new NotFoundException("Board state not found"));
 
         // Validate and apply move via engine (throws InvalidMoveException on illegal)

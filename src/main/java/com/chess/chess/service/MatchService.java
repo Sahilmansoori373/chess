@@ -8,9 +8,9 @@ import java.util.*;
 @Service
 public class MatchService {
     private final MatchRepository matchRepo;
-    private final BoardStateRepository boardRepo;
+    private final BoardEntityRepository boardRepo;
 
-    public MatchService(MatchRepository matchRepo, BoardStateRepository boardRepo) {
+    public MatchService(MatchRepository matchRepo, BoardEntityRepository boardRepo) {
         this.matchRepo = matchRepo;
         this.boardRepo = boardRepo;
     }
@@ -24,7 +24,7 @@ public class MatchService {
         match = matchRepo.save(match);
 
         // initialize board
-        BoardState board = BoardState.builder()
+        BoardEntity board = BoardEntity.builder()
                 .match(match)
                 .fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR") // starting FEN
                 .build();

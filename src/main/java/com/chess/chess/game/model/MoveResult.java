@@ -1,33 +1,42 @@
 package com.chess.chess.game.model;
 
 import com.chess.chess.model.Color;
+import lombok.*;
 
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class MoveResult {
-    private final String newFen;
-    private final String notation;
-    private final boolean check;
-    private final boolean checkmate;
-    private final boolean stalemate;
-    private final String capturedPiece;
-    private final Color winner; // null if none
+    private boolean success;
+    private String message;
+    private String newFen;
+    private boolean check;
+    private boolean checkmate;
+    private boolean stalemate;
+    private Color winner;
+    private String capturedPiece;
+    private String notation;
 
-    public MoveResult(String newFen, String notation, boolean check, boolean checkmate,
-                      boolean stalemate, String capturedPiece, Color winner) {
-        this.newFen = newFen;
-        this.notation = notation;
-        this.check = check;
-        this.checkmate = checkmate;
-        this.stalemate = stalemate;
-        this.capturedPiece = capturedPiece;
-        this.winner = winner;
+    public static MoveResult success(String msg, String newFen) {
+        return MoveResult.builder()
+                .success(true)
+                .message(msg)
+                .newFen(newFen)
+                .build();
     }
 
-    // getters...
-    public String getNewFen() { return newFen; }
-    public String getNotation() { return notation; }
-    public boolean isCheck() { return check; }
-    public boolean isCheckmate() { return checkmate; }
-    public boolean isStalemate() { return stalemate; }
-    public String getCapturedPiece() { return capturedPiece; }
-    public Color getWinner() { return winner; }
+    public static MoveResult error(String msg) {
+        return MoveResult.builder()
+                .success(false)
+                .message(msg)
+                .build();
+    }
+
+    // Fluent helpers for chaining
+    public MoveResult withCheckmate(boolean value) { this.checkmate = value; return this; }
+    public MoveResult withStalemate(boolean value) { this.stalemate = value; return this; }
+    public MoveResult withWinner(Color winner) { this.winner = winner; return this; }
+    public MoveResult withCapturedPiece(String piece) { this.capturedPiece = piece; return this; }
 }

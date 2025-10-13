@@ -4,6 +4,7 @@ import com.chess.chess.game.model.Board;
 import com.chess.chess.game.model.Position;
 import com.chess.chess.game.rules.MoveValidator;
 import com.chess.chess.game.util.FenConverter;
+import com.chess.chess.game.model.MoveResult;
 import com.chess.chess.model.*;
 import com.chess.chess.repository.BoardEntityRepository;
 import com.chess.chess.repository.MatchRepository;

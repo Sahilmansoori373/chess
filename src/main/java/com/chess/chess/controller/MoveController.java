@@ -6,12 +6,14 @@ import com.chess.chess.game.model.MoveResult;
 import com.chess.chess.game.service.GameEngineService;
 import com.chess.chess.model.*;
 import com.chess.chess.service.*;
-import org.springframework.http.*;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.security.Principal;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/move")
@@ -25,9 +27,12 @@ public class MoveController {
     private final UserScoreHistoryService scoreHistoryService;
     private final MessageService messageService;
 
-    public MoveController(MatchService matchService, BoardStateService boardStateService,
-                          MoveService moveService, GameEngineService gameEngineService,
-                          UserService userService, UserScoreHistoryService scoreHistoryService,
+    public MoveController(MatchService matchService,
+                          BoardStateService boardStateService,
+                          MoveService moveService,
+                          GameEngineService gameEngineService,
+                          UserService userService,
+                          UserScoreHistoryService scoreHistoryService,
                           MessageService messageService) {
         this.matchService = matchService;
         this.boardStateService = boardStateService;
@@ -38,71 +43,95 @@ public class MoveController {
         this.messageService = messageService;
     }
 
+    /**
+     * Process a move from the authenticated user.
+     */
     @PostMapping("/play")
     @Transactional
-    public ResponseEntity<ApiResponse> playMove(@Validated @RequestBody MoveRequest req, @RequestHeader("X-USER-ID") Long userId) {
-        Match match = matchService.findById(req.matchId()).orElseThrow(() -> new NotFoundException("Match not found"));
+    public ResponseEntity<ApiResponse> playMove(
+            @Validated @RequestBody MoveRequest req,
+            @RequestHeader("X-USER-ID") Long userId,
+            Principal principal) {
+
+        // 1️⃣ Load match and validate status
+        Match match = matchService.findById(req.matchId())
+                .orElseThrow(() -> new NotFoundException("Match not found"));
+
         if (match.getStatus() != GameStatus.IN_PROGRESS) {
             throw new ConflictException("Match is not in progress");
         }
 
-        User player = userService.findById(userId).orElseThrow(() -> new NotFoundException("User not found"));
+        // 2️⃣ Load player and determine color
+        User player = userService.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
-        // Determine player color
-        Color playerColor = (match.getWhitePlayer().getId().equals(player.getId())) ? Color.WHITE :
-                (match.getBlackPlayer().getId().equals(player.getId())) ? Color.BLACK : null;
-        if (playerColor == null) throw new ConflictException("Player is not a participant of the match");
+        Color playerColor =
+                match.getWhitePlayer().getId().equals(player.getId()) ? Color.WHITE :
+                        match.getBlackPlayer().getId().equals(player.getId()) ? Color.BLACK : null;
 
-        // Enforce turn: derive from move count
+        if (playerColor == null) {
+            throw new ConflictException("Player is not part of this match");
+        }
+
+        // 3️⃣ Enforce turn
         int movesSoFar = match.getMoves().size();
         Color expected = (movesSoFar % 2 == 0) ? Color.WHITE : Color.BLACK;
-        if (expected != playerColor) throw new ConflictException("Not player's turn");
+        if (expected != playerColor) {
+            throw new ConflictException("Not your turn");
+        }
 
-        // Load board state
+        // 4️⃣ Load board state
         BoardEntity boardState = boardStateService.findByMatch(match)
                 .orElseThrow(() -> new NotFoundException("Board state not found"));
 
-        // Validate and apply move via engine (throws InvalidMoveException on illegal)
-        MoveResult result = gameEngineService.validateAndApplyMove(boardState.getFen(), req.from(), req.to(), playerColor);
+        // 5️⃣ Process move using GameEngineService
+        MoveResult result = gameEngineService.processMove(
+                match.getId(),
+                req.from(),
+                req.to(),
+                principal.getName() // now properly injected
+        );
 
-        // Persist move entity
+        // 6️⃣ Persist move entity
         Move moveEntity = Move.builder()
                 .match(match)
                 .player(player)
                 .fromPosition(req.from())
                 .toPosition(req.to())
-                .piece(result.getNotation()) // optionally set piece, notation
+                .piece(result.getNotation())
                 .capturedPiece(result.getCapturedPiece())
                 .moveNumber(match.getMoves().size() + 1)
                 .moveNotation(result.getNotation())
                 .color(playerColor)
                 .build();
-        moveService.saveMove(moveEntity);
 
-        // Update BoardState FEN
+        moveService.saveMove(moveEntity);
         boardState.setFen(result.getNewFen());
         boardStateService.save(boardState);
-
-        // Update match move list (optional for sync; ensure relationships are maintained)
         match.getMoves().add(moveEntity);
 
-        // If result ends game mark match and update scores
+        // 7️⃣ Handle endgame (checkmate / stalemate)
         if (result.isCheckmate() || result.isStalemate()) {
             match.setStatus(GameStatus.COMPLETED);
+
             if (result.getWinner() != null) {
-                User winner = (result.getWinner() == Color.WHITE) ? match.getWhitePlayer() : match.getBlackPlayer();
-                User loser = (winner == match.getWhitePlayer()) ? match.getBlackPlayer() : match.getWhitePlayer();
+                User winner = (result.getWinner() == Color.WHITE)
+                        ? match.getWhitePlayer()
+                        : match.getBlackPlayer();
+                User loser = (winner == match.getWhitePlayer())
+                        ? match.getBlackPlayer()
+                        : match.getWhitePlayer();
 
-                int deltaWin = 30;
-                int deltaLose = 20;
-
-                // Update scores and history
+                int deltaWin = 30, deltaLose = 20;
                 int beforeWinner = winner.getScore();
                 int beforeLoser = loser.getScore();
+
                 winner.setScore(winner.getScore() + deltaWin);
                 loser.setScore(loser.getScore() - deltaLose);
+
                 matchService.save(match);
 
+                // Log score changes
                 scoreHistoryService.save(UserScoreHistory.builder()
                         .user(winner)
                         .scoreBefore(beforeWinner)
@@ -117,21 +146,19 @@ public class MoveController {
                         .match(match)
                         .build());
 
-                // Persist system message
+                // Send system message
                 messageService.sendMessage(Message.builder()
-                        .match(match).sender(null) // null for system
-                        .content("Game ended. Winner: " + winner.getUsername())
+                        .match(match)
+                        .sender(null)
+                        .content("Game over. Winner: " + winner.getUsername())
                         .build());
-            } else {
-                match.setStatus(GameStatus.COMPLETED);
             }
             matchService.save(match);
         } else {
-            // Save match to persist version change (important for optimistic locking)
             matchService.save(match);
         }
 
-        // Return new fen and metadata
+        // 8️⃣ Build response
         Map<String, Object> resp = new HashMap<>();
         resp.put("fen", result.getNewFen());
         resp.put("notation", result.getNotation());
@@ -140,6 +167,6 @@ public class MoveController {
         resp.put("stalemate", result.isStalemate());
         resp.put("captured", result.getCapturedPiece());
 
-        return ResponseEntity.ok(new ApiResponse("ok", "Move applied", resp));
+        return ResponseEntity.ok(new ApiResponse("ok", "Move applied successfully", resp));
     }
 }

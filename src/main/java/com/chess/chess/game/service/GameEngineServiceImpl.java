@@ -21,6 +21,7 @@ public class GameEngineServiceImpl implements GameEngineService {
 
     /**
      * Process a move request (like "e2" → "e4").
+     *
      */
     @Override
     @Transactional

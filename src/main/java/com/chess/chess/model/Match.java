@@ -47,10 +47,7 @@ public class Match {
 
     @OneToOne(mappedBy = "match", cascade = CascadeType.ALL, orphanRemoval = true)
     private BoardEntity boardEntity;
-//
-//    @Temporal(TemporalType.TIMESTAMP)
-//    @Column(nullable = false, updatable = false)
-//    private Date createdAt = new Date();
+
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

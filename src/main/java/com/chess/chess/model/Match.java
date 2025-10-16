@@ -48,7 +48,6 @@ public class Match {
     @OneToOne(mappedBy = "match", cascade = CascadeType.ALL, orphanRemoval = true)
     private BoardEntity boardEntity;
 
-
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -63,20 +62,20 @@ public class Match {
     public User getPlayerByColor(Color color) {
         return color == Color.WHITE ? whitePlayer : blackPlayer;
     }
-
-    /**
-     * Sets the winner of the match.
-     */
-    public void setWinner(User winner) {
-        this.winner = winner;
-    }
-
-    /**
-     * Updates the match status safely.
-     */
-    public void setStatus(GameStatus status) {
-        this.status = status;
-    }
+//
+//    /**
+//     * Sets the winner of the match.
+//     */
+//    public void setWinner(User winner) {
+//        this.winner = winner;
+//    }
+//
+//    /**
+//     * Updates the match status safely.
+//     */
+//    public void setStatus(GameStatus status) {
+//        this.status = status;
+//    }
 
     /**
      * Switches the turn color after a valid move.

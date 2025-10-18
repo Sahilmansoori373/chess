@@ -16,6 +16,7 @@ public class UserScoreHistory {
     private int scoreBefore;
     private int scoreAfter;
 
+
     @ManyToOne @JoinColumn(name = "match_id")
     private Match match;
 

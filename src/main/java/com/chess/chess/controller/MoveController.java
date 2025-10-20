@@ -130,7 +130,6 @@ public class MoveController {
                 loser.setScore(loser.getScore() - deltaLose);
 
                 matchService.save(match);
-
                 // Log score changes
                 scoreHistoryService.save(UserScoreHistory.builder()
                         .user(winner)

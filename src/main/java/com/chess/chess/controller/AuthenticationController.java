@@ -36,6 +36,7 @@ public class AuthenticationController {
         }
     }
 
+    
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> login(@Valid @RequestBody AuthenticationRequest request) {
         try {

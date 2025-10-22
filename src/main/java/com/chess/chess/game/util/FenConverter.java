@@ -92,6 +92,7 @@ public class FenConverter {
         return sb.toString();
     }
 
+
     /**
      * Convert algebraic notation (like "e4") to a Position object.
      */

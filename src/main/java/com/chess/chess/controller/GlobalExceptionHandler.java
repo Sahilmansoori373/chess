@@ -32,6 +32,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse("error", message, null));
     }
 
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse> handleOther(Exception ex) {
         ex.printStackTrace(); // do not do this in prod logs; use logger

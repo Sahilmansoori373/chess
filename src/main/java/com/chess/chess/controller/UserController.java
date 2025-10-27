@@ -17,7 +17,6 @@ import java.util.Map;
 public class UserController {
 
     private final UserService userService; // assume you have a UserService with findByUsername()
-
     public UserController(UserService userService) {
         this.userService = userService;
     }

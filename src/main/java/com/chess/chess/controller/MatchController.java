@@ -47,6 +47,7 @@ public class MatchController {
         return ResponseEntity.ok(new ApiResponse("ok", "Match fetched", match));
     }
 
+
     @GetMapping("/user/{userId}")
     public ResponseEntity<ApiResponse> getMatchesByUser(@PathVariable Long userId) {
         User user = userService.findById(userId).orElseThrow(() -> new NotFoundException("User not found"));

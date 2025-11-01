@@ -41,13 +41,11 @@ public class MatchController {
                 .body(new ApiResponse("ok", "Match started", Map.of("matchId", match.getId(), "fen", boardState.getFen())));
     }
 
-
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse> getMatch(@PathVariable Long id) {
         Match match = matchService.findById(id).orElseThrow(() -> new NotFoundException("Match not found"));
         return ResponseEntity.ok(new ApiResponse("ok", "Match fetched", match));
     }
-
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<ApiResponse> getMatchesByUser(@PathVariable Long userId) {

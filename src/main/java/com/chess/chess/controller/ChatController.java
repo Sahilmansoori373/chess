@@ -39,6 +39,7 @@ public class ChatController {
         return ResponseEntity.ok(new ApiResponse("ok", "Message sent", saved));
     }
 
+
     @GetMapping("/history/{matchId}")
     public ResponseEntity<ApiResponse> getHistory(@PathVariable Long matchId) {
         Match match = matchService.findById(matchId).orElseThrow(() -> new NotFoundException("Match not found"));

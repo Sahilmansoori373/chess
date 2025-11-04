@@ -20,6 +20,7 @@ public class AuthenticationController {
     private final UserService userService;
 
     private final AuthenticationManager authenticationManager;
+
     private final JwtUtil jwtUtil;
 
     @PostMapping("/register")

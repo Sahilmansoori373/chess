@@ -23,6 +23,7 @@ public class AuthenticationController {
 
     private final JwtUtil jwtUtil;
 
+
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(@Valid @RequestBody RegisterRequest request) {
         try {
